@@ -30,6 +30,7 @@
   "author": "Angel Rodriguez <angel@frubana.co>",
   "license": "MIT",
   "dependencies": {
-    "tslib": "~1.9.3"
+    "node-rdkafka": "^2.4.2",
+    "tslib": "^1.9.3"
   }
 }
