@@ -1,24 +1,33 @@
 
 import * as Kafka from "node-rdkafka";
-const stream = Kafka.createReadStream({
+
+const consumer = new Kafka.KafkaConsumer({
+  'group.id': 'kafka',
   'metadata.broker.list': 'localhost:9092',
-  'group.id': 'librd-test',
-  'socket.keepalive.enable': true,
-  'enable.auto.commit': false
-}, {}, {
-  topics: 'test',
-  waitInterval: 0,
-  objectMode: false
-});
+  'offset_commit_cb': (err: string, topicPartitions: string) => {
 
-stream.on('error', (err: string) => {
-  if (err) console.log(err);
-  process.exit(1);
-});
+    if (err) {
+      // There was an error committing
+      console.error(err);
+    } else {
+      // Commit went through. Let's log the topic partitions
+      console.log(topicPartitions);
+    }
 
-stream.pipe(process.stdout);
+  }
+},{})
 
+consumer.connect();
 
-stream.consumer.on('event.error', (err: string) => {
-  console.log(err);
-})
+consumer.on('ready',() => {
+    consumer.subscribe(['test']);
+
+    // Consume from the librdtesting-01 topic. This is what determines
+    // the mode we are running in. By not specifying a callback (or specifying
+    // only a callback) we get messages as soon as they are available.
+    consumer.consume();
+  })
+  .on('data', (data: any) => {
+    // Output the actual message contents
+    console.log('Data: ',data.value.toString());
+  });
