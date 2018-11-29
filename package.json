@@ -26,7 +26,7 @@
     "build": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "lint": "tslint -t stylish --project \"tsconfig.json\"",
-    "test": "mocha"
+    "test": "mocha --require ts-node/register test/**/*.ts"
   },
   "author": "Angel Rodriguez <angel@frubana.co>",
   "license": "MIT",
